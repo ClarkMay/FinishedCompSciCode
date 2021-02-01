@@ -25,8 +25,10 @@ freeThrowMade_Array = []
 freeThrowMissed_Array = []
 fgAttempt_Array = []
 threePointAttempt_Array = []
-
+totalPoints = 0
 visitorScore = []
+global visitorFoul
+visitorFoul = 0
 visitorScore_Array =[]
 
 playerList = [] #Empty Player List
@@ -35,6 +37,8 @@ global buttonPress
 buttonPress = False
 global k
 k = 1
+
+#global playerCount
 
 root = Tk()
 newWindow = Tk()
@@ -72,13 +76,6 @@ def buttonPressTrue():
     mainWindow()
 
 Button(newWindow, text='Start Game', bg="black", command=gameWindow, fg="white", highlightbackground="gray90", activebackground="deep sky blue").place(x=130, y=120, height=33, width=150)
-
-def fgMade_Fun(j):
-    get_points = points[j].get()
-    add_points = int(get_points) + 2
-
-    points[j].delete(0, tk.END)
-    points[j].insert(0, add_points)
 
 def fieldGoalAttempt(j):
     get_fgAttempt = fgAttempt[j].get()
@@ -136,33 +133,6 @@ def addBlocks(j):
     blocks[j].delete(0, tk.END)
     blocks[j].insert(0, add_blocks)
 
-def addFouls(j):
-    get_fouls = fouls[j].get()
-    add_fouls = int(get_fouls) + 1
-
-    fouls[j].delete(0, tk.END)
-    fouls[j].insert(0, add_fouls)
-
-def threePointerMade(j):
-    get_points = points[j].get()
-    add_points = int(get_points) + 3
-
-    points[j].delete(0, tk.END)
-    points[j].insert(0, add_points)
-
-def freeThrowMake(j):
-    get_points = points[j].get()
-    add_points = int(get_points) + 1
-
-    points[j].delete(0, tk.END)
-    points[j].insert(0, add_points)
-
-    get_ftMade = freeThrowMade[j].get()
-    add_ftMade = int(get_ftMade) + 1
-
-    freeThrowMade[j].delete(0, tk.END)
-    freeThrowMade[j].insert(0, add_ftMade)
-
 def freeThrowMiss(j):
     get_ftMissed = freeThrowMissed[j].get()
     add_ftMissed = int(get_ftMissed) + 1
@@ -176,28 +146,28 @@ def visitorScores(j):
 
     visitorScore[j].delete(0, tk.END)
     visitorScore[j].insert(0, add_visitorScore)
+
 def statTracker():
     global playerCount
     playerCount = len(playerList)
     pointCounter = 0
     xCoordinate = 0
+    #yCoordinate = 500
 
     for j in range(0, playerCount):
-
-        yCoordinate = 150
-        xCoordinate += 200  # Seperates each column
-
+        xCoordinate += 175  # Seperates each column
+        yCoordinate = 120
         playerLabel = Label(root, text=playerList[j], bg="white", fg="black", highlightbackground="gray90", borderwidth=1,relief="raised").place(x=5 + xCoordinate, y=5 + yCoordinate, height=30, width=150)
 
         #points
-        pointLabel = Label(root, text="Points: ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y = 40 + yCoordinate, height=30, width=55)
+        pointLabel = Label(root, text="Points ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y = 40 + yCoordinate, height=30, width=55)
         boxname = Entry(root, bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised")
         points.append(boxname)
         points[j].insert(0, 0)
         boxname.place(x=60 + xCoordinate, y=40 + yCoordinate, height=30, width=95)
 
         #assists
-        assistLabel = Label(root, text="Assists: ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y = 70 + yCoordinate, height=30, width=55)
+        assistLabel = Label(root, text="Assists ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y = 70 + yCoordinate, height=30, width=55)
         assistBox = Entry(root,bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised")
         assists.append(assistBox)
         assists[j].insert(0, 0)
@@ -205,10 +175,10 @@ def statTracker():
 
         assistAddition = Button(root, text='+', command = lambda pointCounter=pointCounter: addAssists(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
         assistMade_Array.append(assistAddition)
-        assistAddition.place(x = 120 + xCoordinate, y = 76 + yCoordinate, height = 15, width =15)
+        assistAddition.place(x = 120 + xCoordinate, y = 76 + yCoordinate, height=20, width=20)
 
         #rebounds
-        reboundLabel = Label(root, text="Rebounds: ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y = 100 + yCoordinate, height=30, width=55)
+        reboundLabel = Label(root, text="Rebounds ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y = 100 + yCoordinate, height=30, width=55)
         reboundBox = Entry(root, bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised")
         rebounds.append(reboundBox)
         rebounds[j].insert(0, 0)
@@ -216,10 +186,10 @@ def statTracker():
 
         reboundAddition = Button(root, text='+', command = lambda pointCounter=pointCounter: addRebounds(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
         rebounds_Array.append(reboundAddition)
-        reboundAddition.place(x = 120 + xCoordinate, y = 106 + yCoordinate, height=15, width=15)
+        reboundAddition.place(x = 120 + xCoordinate, y = 106 + yCoordinate, height=20, width=20)
 
         #steals
-        stealLabel = Label(root, text="Steals: ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y=130 + yCoordinate, height=30, width=55)
+        stealLabel = Label(root, text="Steals ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y=130 + yCoordinate, height=30, width=55)
         stealBox = Entry(root, bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised")
         steals.append(stealBox)
         steals[j].insert(0, 0)
@@ -227,10 +197,10 @@ def statTracker():
 
         stealAddition = Button(root, text='+', command = lambda pointCounter=pointCounter: addSteals(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
         steal_Array.append(stealAddition)
-        stealAddition.place(x = 120 + xCoordinate, y = 136 + yCoordinate, height=15, width=15)
+        stealAddition.place(x = 120 + xCoordinate, y = 136 + yCoordinate, height=20, width=20)
 
         #blocks
-        blockLabel = Label(root, text="Blocks: ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y=160 + yCoordinate, height=30, width=55)
+        blockLabel = Label(root, text="Blocks ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y=160 + yCoordinate, height=30, width=55)
         blockBox = Entry(root, bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised")
         blocks.append(blockBox)
         blocks[j].insert(0, 0)
@@ -238,10 +208,10 @@ def statTracker():
 
         blockAddition = Button(root, text='+', command = lambda pointCounter=pointCounter: addBlocks(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
         block_Array.append(blockAddition)
-        blockAddition.place(x = 120 + xCoordinate, y = 166 + yCoordinate, height=15, width=15)
+        blockAddition.place(x = 120 + xCoordinate, y = 166 + yCoordinate, height=20, width=20)
 
         #fouls
-        foulsLabel = Label(root, text="Fouls: ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y=190 + yCoordinate, height=30, width=55)
+        foulsLabel = Label(root, text="Fouls ", bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="raised").place(x=5 + xCoordinate, y=190 + yCoordinate, height=30, width=55)
         foulsBox = Entry(root, bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised")
         fouls.append(foulsBox)
         fouls[j].insert(0, 0)
@@ -249,7 +219,7 @@ def statTracker():
 
         foulsAddition = Button(root, text='+', command = lambda pointCounter=pointCounter: addFouls(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
         foul_Array.append(foulsAddition)
-        foulsAddition.place(x = 120 + xCoordinate, y = 196 + yCoordinate, height=15, width=15)
+        foulsAddition.place(x = 120 + xCoordinate, y = 195 + yCoordinate, height=20, width=20)
 
         # field goal made
         fgMade = Button(root, text='FG Made',
@@ -336,8 +306,19 @@ def statTracker():
         #bearkats box
         Label(root, text="Bearkats", bg="white", fg="black", borderwidth=1, relief="raised").place(x=730, y=15, height=30, width=150)
         Label(root, text="Visitor", bg="white", fg="black", borderwidth=1, relief="raised").place(x=730, y=45, height=30, width=150)
-        bearkatScore = Entry(root,bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="solid")
-        bearkatScore.place(x=880, y=15, height=30, width=150)
+
+        global bearkatBox
+        bearkatBox = Entry(root,bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="solid")
+        bearkatBox.place(x=880, y=15, height=30, width=150)
+        #bearkat Fouls
+        Label(root, text="Fouls: ", bg="white", fg="black", borderwidth=1, relief="solid").place(x=1030, y=15, height=30, width=50)
+
+        global bearkatFouls
+        bearkatFouls = Entry(root,bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="solid")
+        bearkatFouls.place(x=1080, y=15, height=30, width=50)
+
+        #newQuarter = Button(root, text='New Half', command=clearFouls, bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised",activebackground="deep sky blue")
+        #newQuarter.place(x=1200, y =15, height=30, width=50)
 
         #visitor box
         visitorBox = Entry(root, bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised")
@@ -345,10 +326,104 @@ def statTracker():
         visitorScore[j].insert(0, 0)
         visitorBox.place(x=880, y = 45, height=30, width=150)
 
-        visitorAddition = Button(root, text='+', command = lambda pointCounter=pointCounter: visitorScores(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
+        #visitor fouls
+        global visitorFoulsBox
+        Label(root, text="Fouls: ", bg="white", fg="black", borderwidth=1, relief="solid").place(x=1030, y=45, height=30, width=50)
+        visitorFoulsBox = Entry(root,bg="white", fg="black", highlightbackground="gray90", borderwidth=1, relief="solid")
+        visitorFoulAddition = Button(root, text='Foul Committed', command = lambda pointCounter=pointCounter: visitorFouls(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
+        visitorFoulAddition.place(x=1130, y=45, height=30, width=100)
+        visitorFoulsBox.place(x=1080, y=45, height=30, width=50)
+
+        #visitor score
+        visitorAddition = Button(root, text='Add Points', command = lambda pointCounter=pointCounter: visitorScores(pointCounter),bg="white", fg="black", highlightbackground="gray90", borderwidth=2, relief="raised", activebackground="deep sky blue")
         visitorScore_Array.append(visitorAddition)
-        visitorAddition.place(x = 1030, y = 45, height=30, width=30)
+        visitorAddition.place(x = 655, y = 45, height=30, width=75)
+
         pointCounter += 1
+
+
+def visitorFouls(j):
+    global visitorFoul
+    visitorFoul += 1
+
+    visitorFoulsBox.delete(0, tk.END)
+    visitorFoulsBox.insert(0, visitorFoul)
+
+def addFouls(j):
+    totalFouls = 1
+    get_fouls = fouls[j].get()
+    add_fouls = int(get_fouls) + 1
+
+    for i in range(playerCount):
+        totalGetFouls = fouls[i].get()
+        intTotalGetFouls = int(totalGetFouls)
+        totalFouls = totalFouls + intTotalGetFouls
+
+    bearkatFouls.delete(0, tk.END)
+    bearkatFouls.insert(0, totalFouls)
+
+    fouls[j].delete(0, tk.END)
+    fouls[j].insert(0, add_fouls)
+
+def clearFouls():
+    totalFouls = 0
+
+    bearkatFouls.delete(0, tk.END)
+    bearkatFouls.insert(0, totalFouls)
+
+def fgMade_Fun(j):
+    totalPoints = 0
+    get_points = points[j].get()
+    add_points = int(get_points) + 2
+
+    points[j].delete(0, tk.END)
+    points[j].insert(0, add_points)
+
+    for i in range(playerCount):
+        totalGetPoints = points[i].get()
+        intTotalGetPoints = int(totalGetPoints)
+        totalPoints = totalPoints + intTotalGetPoints
+
+    bearkatBox.delete(0, totalPoints)
+    bearkatBox.insert(0, totalPoints)
+
+def threePointerMade(j):
+    totalPoints = 0
+    get_points = points[j].get()
+    add_points = int(get_points) + 3
+
+    points[j].delete(0, tk.END)
+    points[j].insert(0, add_points)
+
+    for i in range(playerCount):
+        totalGetPoints = points[i].get()
+        intTotalGetPoints = int(totalGetPoints)
+        totalPoints = totalPoints + intTotalGetPoints
+
+    bearkatBox.delete(0, totalPoints)
+    bearkatBox.insert(0, totalPoints)
+
+def freeThrowMake(j):
+    totalPoints = 0
+    get_points = points[j].get()
+    add_points = int(get_points) + 1
+
+    points[j].delete(0, tk.END)
+    points[j].insert(0, add_points)
+
+    for i in range(playerCount):
+        totalGetPoints = points[i].get()
+        intTotalGetPoints = int(totalGetPoints)
+        totalPoints = totalPoints + intTotalGetPoints
+
+    get_ftMade = freeThrowMade[j].get()
+    add_ftMade = int(get_ftMade) + 1
+
+    freeThrowMade[j].delete(0, tk.END)
+    freeThrowMade[j].insert(0, add_ftMade)
+
+    bearkatBox.delete(0, totalPoints)
+    bearkatBox.insert(0, totalPoints)
 
 def saveToFile():
     fileToSaveTo = open('Game.csv', "w")
